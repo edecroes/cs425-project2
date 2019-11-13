@@ -8,6 +8,16 @@ public class BeanApplicant {
     private String displayname;
     private int id;
     
+    private String[] skills;
+    
+    public String getSkillsList(){
+        Database db = new Database();
+        return (db.getSkillsListAsHTML(userid));
+    //research left joins, query that generates html
+    //string builder
+    
+    }
+    
     public void setUserInfo(){
         Database db = new Database();
         HashMap<String, String> userinfo = db.getUserInfo(username);
