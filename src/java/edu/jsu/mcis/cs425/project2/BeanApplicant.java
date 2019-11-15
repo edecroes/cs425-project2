@@ -13,6 +13,7 @@ public class BeanApplicant {
     public String getSkillsList(){
         Database db = new Database();
         return (db.getSkillsListAsHTML(userid));
+        
     //research left joins, query that generates html
     //string builder
     
