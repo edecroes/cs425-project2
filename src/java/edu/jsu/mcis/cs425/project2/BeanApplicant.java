@@ -8,8 +8,10 @@ public class BeanApplicant {
     private String displayname;
     private int id;
     private int userid;
-    
     private String[] skills;
+    private String[] jobs;
+    
+    Database db = new Database();
     
     public String getSkillsList(){
         Database db = new Database();
@@ -52,15 +54,17 @@ public class BeanApplicant {
     }
     
     public String getJobsList() {
-        Database db = new Database();
+        
         return ( db.getJobsListAsHTML(userid) );
     }
     public String[] getSkills(){
         return skills;
     }
     
-    public void setSkillsList() {
-        Database db = new Database();
+    public void setSkillsList(String[] skills ) {
         db.setSkillsList(userid, skills);
+        //"setSkillsList()" method checks first to see whether a new list of skills was received; 
+        //if it was not, that means that the jobs page was opened directly instead of from the skills page,
+        //and the jobs page will work with the list of skills already in the database.  
     }
 }
