@@ -9,12 +9,13 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Applicant Welcome Page</title>
+        
     </head>
     
     <body>
         <h1>Hello, <jsp:getProperty name="applicant" property="username" />!</h1>
         <a href="<%= request.getContextPath() %>/main/applicant_skills.jsp" target="_self">Select Skills</a>
-        <a href="<%= request.getContextPath() %>/public/applicant_jobs.jsp" target="_self">Select Jobs</a>
+        <a href="<%= request.getContextPath() %>/main/applicant_jobs.jsp" target="_self">Select Jobs</a>
         <a href="<%= request.getContextPath() %>/main/applicant_report.jsp" target="_self">Create Job Report</a>
         <a href="<%= request.getContextPath() %>/public/logout.jsp" target="_self">Log Out</a>
     </body>

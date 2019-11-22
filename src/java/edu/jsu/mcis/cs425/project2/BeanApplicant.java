@@ -11,9 +11,10 @@ public class BeanApplicant {
     private String[] skills;
     private String[] jobs;
     
-    Database db = new Database();
+    
     
     public String getSkillsList(){
+        Database db = new Database();
         return (db.getSkillsListAsHTML(userid));
     }
     
@@ -49,7 +50,7 @@ public class BeanApplicant {
     }
     
     public String getJobsList() {
-        
+        Database db = new Database();
         return ( db.getJobsListAsHTML(userid) );
     }
     public String[] getSkills(){
@@ -66,11 +67,11 @@ public class BeanApplicant {
     
     public void setSkillsList(){
         Database db = new Database();
-        db.setSkillsList(userid, skills);
+        //db.setSkillsList(userid, skills);
      }
     
     public void setJobsList() {
         Database db = new Database();
-        db.setJobsList(userid, jobs);
+        //db.setJobsList(userid, jobs);
      }
 }
