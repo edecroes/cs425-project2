@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.jsu.mcis.cs425.project2;
 
 import java.sql.Connection;
@@ -41,8 +36,12 @@ public class Database {
                 if(resultset.next()){
                     //Initalize HashMap; add user data from resultset
                     //use descriptive key name "id" for the ID, and "displayname" for the displayname
+                    
                     results = new HashMap<>();
-                   
+                    String id = String.valueOf((resultset.getInt("id")));
+                    String displayname = resultset.getString("displayname");
+                    results.put("userid", id);
+                    results.put("displayname", displayname);
                    // results += getResultSetTable(resultset);
                     
                     
@@ -154,11 +153,12 @@ public class Database {
         return s.toString();
     }
     public setSkillsList(int userid, String[] skills){
-        
+        skills = null;
+        //add new selected skills r
     }
     
     public setJobsList(int userid, String[] skills){
-        
+        skills = null;
     }
     
     public Connection getConnection(){

@@ -65,8 +65,8 @@ public class BeanApplicant {
     }
     
     public void setSkillsList(){
-         Database db = new Database();
-         db.setSkillsList(userid, skills);
+        Database db = new Database();
+        db.setSkillsList(userid, skills);
      }
     
     public void setJobsList() {
