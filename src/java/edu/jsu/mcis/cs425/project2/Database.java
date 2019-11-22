@@ -25,7 +25,7 @@ public class Database {
         
             Connection conn = getConnection();
             
-            String query = "SELECT * FROM 'user' WHERE username = ?";
+            String query = "SELECT * FROM user WHERE username = ?";
             
             PreparedStatement pstatement = conn.prepareStatement(query);
             pstatement.setString(1, username);
@@ -63,42 +63,45 @@ public class Database {
         
         //get result set by running the query and iterate through the results
         //throw an exception if there is an error in the database
-            String query = "SELECT skills.*, a.userid FROM skills LEFT JOIN (SELECT * FROM applicants_to_skills WHERE userid = 1) AS a ON skills.id = a.skillsid;";
+            String query = "SELECT skills.*, a.userid FROM skills LEFT JOIN "
+                    + "(SELECT * FROM applicants_to_skills WHERE userid = ?) AS a "
+                    + "ON skills.id = a.skillsid ORDER BY skills.description";
             
             try{
-            Connection conn = getConnection();
-            PreparedStatement pstatement = conn.prepareStatement(query);
-            pstatement.setInt(1, userid);
-            
-            boolean hasresults = pstatement.execute(); 
-            
-            if(hasresults){
-                ResultSet resultset = pstatement.getResultSet();
                 
-                while(resultset.next()){
-                    String description = resultset.getString("description");
-                    int id = resultset.getInt("id");
-                    int user = resultset.getInt("userid");
+                Connection conn = getConnection();
+                PreparedStatement pstatement = conn.prepareStatement(query);
+                pstatement.setInt(1, userid);
 
-                    s.append("<input type=\"checkbox\" name=\"skills\" value=\"");
-                    s.append(id);
-                    s.append("\" id=\"skills_").append(id).append( "\" ");
+                boolean hasresults = pstatement.execute(); 
 
-                    // is this box checked?
-                    if(user != 0){
-                        s.append("checked");
+                if(hasresults){
+                    ResultSet resultset = pstatement.getResultSet();
+
+                    while(resultset.next()){
+                        String description = resultset.getString("description");
+                        int id = resultset.getInt("id");
+                        int user = resultset.getInt("userid");
+
+                        s.append("<input type=\"checkbox\" name=\"skills\" value=\"");
+                        s.append(id);
+                        s.append("\" id=\"skills_").append(id).append( "\" ");
+
+                        // is this box checked?
+                        if(user != 0){
+                            s.append("checked");
+                        }
+
+                        s.append(">\n");
+
+                        s.append("<label for=\"skills_").append(id).append("\">");
+                        s.append(description);
+                        s.append("</label><br />\n\n");
+
+                        //return as a json string
+                        //SELECT skills.*, a.userid FROM skills LEFT JOIN (SELECT * FROM applicants_to_skills WHERE userid = 1) AS a ON skills.id = a.skillsid;
                     }
-
-                    s.append("><br />");
-
-                    s.append("<label for=\"skills_").append(id).append("\">");
-                    s.append(description);
-                    s.append("</label><br /><br />");
-
-                    //return as a json string
-                    //SELECT skills.*, a.userid FROM skills LEFT JOIN (SELECT * FROM applicants_to_skills WHERE userid = 1) AS a ON skills.id = a.skillsid;
                 }
-            }
             }     
             catch(Exception e){ e.printStackTrace(); }
         
@@ -160,6 +163,7 @@ public class Database {
         
         return s.toString();
     }
+    /*
     public setSkillsList(int userid, String[] skills){
         //skills = null;
         try{
@@ -175,6 +179,7 @@ public class Database {
     public setJobsList(int userid, String[] skills){
         skills = null;
     }
+*/
     
     public Connection getConnection(){
         
