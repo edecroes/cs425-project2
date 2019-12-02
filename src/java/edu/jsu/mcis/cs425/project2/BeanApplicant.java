@@ -60,11 +60,26 @@ public class BeanApplicant {
     
     public void setSkillsList(){
         Database db = new Database();
-        //db.setSkillsList(userid, skills);
+        db.setSkillsList(userid, skills);
      }
     
     public void setJobsList() {
         Database db = new Database();
-        //db.setJobsList(userid, jobs);
+        db.setJobsList(userid, jobs);
      }
+
+    public String[] getJobs() {
+        return jobs;
+    }
+
+    public void setJobs(String[] jobs) {
+        this.jobs = jobs;
+    }
+
+    public void setSkills(String[] skills) {
+        this.skills = skills;
+    }
+    
+    
+    
 }

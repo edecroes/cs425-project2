@@ -9,6 +9,7 @@ import java.util.HashMap;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
+import org.apache.catalina.tribes.util.Arrays;
 
 /**
  *
@@ -108,10 +109,6 @@ public class Database {
         return s.toString();
     }
     
-    //SELECT a.userid, j.name, s.skillsid FROM ((applicants_to_skills a JOIN skills_to_jobs s ON a.skillsid = s.skillsid)
-    //JOIN jobs j on s.jobsid = j.id);
-
-
     
     public String getJobsListAsHTML(int userid) {
         StringBuilder s = new StringBuilder();
@@ -120,11 +117,15 @@ public class Database {
         //throw an exception if there is an error in the database
         
         //String query = "SELECT * FROM 'user' WHERE username = ?";
-        String query = "SELECT jobs.id, jobs.name, a.userid FROM jobs LEFT JOIN(SELECT * FROM applicants_to_jobs WHERE userid = ?) AS a ON jobs.id = a.jobsid WHERE jobs.id IN(SELECT jobsid AS id FROM(applicants_to_skills JOIN skills_to_jobs ON applicants_to_skills.skillsid = skills_to_jobs.skillsid) WHERE applicants_to_skills.userid = ?) ORDER BY jobs.name";
+        String query = "SELECT jobs.id, jobs.name, a.userid FROM jobs LEFT JOIN(SELECT * "
+                + "FROM applicants_to_jobs WHERE userid = ?) AS a ON jobs.id = a.jobsid WHERE jobs.id IN(SELECT jobsid AS id "
+                + "FROM(applicants_to_skills JOIN skills_to_jobs ON applicants_to_skills.skillsid = skills_to_jobs.skillsid) "
+                + "WHERE applicants_to_skills.userid = ?) ORDER BY jobs.name";
             try {
                 Connection conn = getConnection();
                 PreparedStatement pstatement = conn.prepareStatement(query);
                 pstatement.setInt(1, userid);
+                pstatement.setInt(2, userid);
 
                 boolean hasresults = pstatement.execute(); 
 
@@ -132,7 +133,7 @@ public class Database {
                     ResultSet resultset = pstatement.getResultSet();
 
                     while(resultset.next()){
-                        String description = resultset.getString("description");
+                        String description = resultset.getString("name");
                         int id = resultset.getInt("id");
                         int user = resultset.getInt("userid");
 
@@ -163,23 +164,66 @@ public class Database {
         
         return s.toString();
     }
-    /*
-    public setSkillsList(int userid, String[] skills){
-        //skills = null;
+    
+    public void setSkillsList(int userid, String[] skills){
         try{
             Connection conn = getConnection();
             //conn = DriverManager.getConnection(server, user, password);
-            String query = "UPDATE * FROM 'user' WHERE username = ?";
-            PreparedStatement stmt = conn.prepareStatement(query);
+            
+            System.err.println( Arrays.toString(skills) );
+            
+            // Delete existing skill selections (if any)
+            
+            String deletequery = "DELETE FROM applicants_to_skills WHERE userid = ?";
+            PreparedStatement deletestmt = conn.prepareStatement(deletequery);
+            deletestmt.setInt(1, userid);
+            deletestmt.executeUpdate();
+            
+            // Insert new skill selections
+            
+            String insertquery = "INSERT INTO applicants_to_skills (userid, skillsid) VALUES (?, ?)";
+            PreparedStatement insertstmt = conn.prepareStatement(insertquery);
+            
             //add new selected skills r
+            for(int i = 0; i < skills.length; i++){
+                int skillsid = Integer.parseInt(skills[i]);
+                insertstmt.setInt(1, userid);
+                insertstmt.setInt(2, skillsid);
+                insertstmt.addBatch();
+            }
+            
+            int[] results = insertstmt.executeBatch();
+
+            deletestmt.close();
+            insertstmt.close();
+            
         }
         catch(Exception e){ e.printStackTrace(); }
     }
 
-    public setJobsList(int userid, String[] skills){
-        skills = null;
+    public void setJobsList(int userid, String[] jobs){
+        try{
+            Connection conn = getConnection();
+            //conn = DriverManager.getConnection(server, user, password);
+            String deletequery = "DELETE FROM applicants_to_jobs WHERE userid =?";
+            PreparedStatement deletestmt = conn.prepareStatement(deletequery);
+            String insertquery = "INSERT * FROM applicants_to_jobs a";
+            PreparedStatement insertstmt = conn.prepareStatement(insertquery);
+            //add new selected skills r
+            for(int i =0; i < jobs.length; i++){
+                
+                insertstmt.addBatch();
+            }
+            
+            int[] d = deletestmt.executeBatch();
+            int[] i = insertstmt.executeBatch();
+            conn.commit();
+            deletestmt.close();
+            insertstmt.close();
+        }
+        catch(Exception e){ e.printStackTrace(); }
     }
-*/
+
     
     public Connection getConnection(){
         
